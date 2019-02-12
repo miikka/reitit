@@ -33,27 +33,6 @@
   (expand [_ _]))
 
 ;;
-;; Conflicts
-;;
-
-(defn path-conflicts-str [conflicts]
-  (apply str "Router contains conflicting route paths:\n\n"
-         (mapv
-           (fn [[[path] vals]]
-             (str "   " path "\n-> " (str/join "\n-> " (mapv first vals)) "\n\n"))
-           conflicts)))
-
-(defn name-conflicts-str [conflicts]
-  (apply str "Router contains conflicting route names:\n\n"
-         (mapv
-           (fn [[name vals]]
-             (str name "\n-> " (str/join "\n-> " (mapv first vals)) "\n\n"))
-           conflicts)))
-
-(defn throw-on-conflicts! [f conflicts]
-  (exception/fail! (f conflicts) {:conflicts conflicts}))
-
-;;
 ;; Router
 ;;
 
@@ -347,7 +326,8 @@
    :expand expand
    :coerce (fn coerce [route _] route)
    :compile (fn compile [[_ {:keys [handler]}] _] handler)
-   :conflicts (fn throw! [conflicts] (throw-on-conflicts! path-conflicts-str conflicts))})
+   :exceptions exception/format
+   :conflicts (fn throw! [conflicts] (exception/fail! ::exception/path-conflicts conflicts))})
 
 (defn router
   "Create a [[Router]] from raw route data and optionally an options map.
@@ -364,33 +344,39 @@
   | `:coerce`    | Function of `route opts => route` to coerce resolved route, can throw or return `nil`
   | `:compile`   | Function of `route opts => result` to compile a route handler
   | `:validate`  | Function of `routes opts => ()` to validate route (data) via side-effects
-  | `:conflicts` | Function of `{route #{route}} => ()` to handle conflicting routes (default `reitit.core/throw-on-conflicts!`)
+  | `:conflicts` | Function of `{route #{route}} => ()` to handle conflicting routes
+  | `:exceptions`| Function of `Exception => Exception ` to handle creation time exceptions (default `reitit.exception/format`)
   | `:router`    | Function of `routes opts => router` to override the actual router implementation"
   ([raw-routes]
    (router raw-routes {}))
   ([raw-routes opts]
-   (let [{:keys [router] :as opts} (merge (default-router-options) opts)
-         routes (impl/resolve-routes raw-routes opts)
-         path-conflicting (impl/path-conflicting-routes routes)
-         name-conflicting (impl/name-conflicting-routes routes)
-         compiled-routes (impl/compile-routes routes opts)
-         wilds? (boolean (some impl/wild-route? compiled-routes))
-         all-wilds? (every? impl/wild-route? compiled-routes)
-         router (cond
-                  router router
-                  (and (= 1 (count compiled-routes)) (not wilds?)) single-static-path-router
-                  path-conflicting quarantine-router
-                  (not wilds?) lookup-router
-                  all-wilds? trie-router
-                  :else mixed-router)]
+   (let [{:keys [router] :as opts} (merge (default-router-options) opts)]
+     (try
+       (let [routes (impl/resolve-routes raw-routes opts)
+             path-conflicting (impl/path-conflicting-routes routes)
+             name-conflicting (impl/name-conflicting-routes routes)
+             compiled-routes (impl/compile-routes routes opts)
+             wilds? (boolean (some impl/wild-route? compiled-routes))
+             all-wilds? (every? impl/wild-route? compiled-routes)
+             router (cond
+                      router router
+                      (and (= 1 (count compiled-routes)) (not wilds?)) single-static-path-router
+                      path-conflicting quarantine-router
+                      (not wilds?) lookup-router
+                      all-wilds? trie-router
+                      :else mixed-router)]
 
-     (when-let [conflicts (:conflicts opts)]
-       (when path-conflicting (conflicts path-conflicting)))
+         (when-let [conflicts (:conflicts opts)]
+           (when path-conflicting (conflicts path-conflicting)))
 
-     (when name-conflicting
-       (throw-on-conflicts! name-conflicts-str name-conflicting))
+         (when name-conflicting
+           (exception/fail! ::exception/name-conflicts name-conflicting))
 
-     (when-let [validate (:validate opts)]
-       (validate compiled-routes opts))
+         (when-let [validate (:validate opts)]
+           (validate compiled-routes opts))
 
-     (router compiled-routes opts))))
+         (router compiled-routes opts))
+
+       (catch Exception e
+         (let [exceptions (:exceptions opts)]
+           (throw (if exceptions (exceptions e) e))))))))
