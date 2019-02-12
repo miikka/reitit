@@ -100,7 +100,7 @@
        (mapv
          (fn [[[path] vals]]
            [:group
-            [:span "   " (color :string path)]
+            [:span "   " (color ::body path)]
             [:break]
             (into
               [:group]
@@ -113,6 +113,8 @@
        [:span "Either fix the conflicting paths or disable the conflict resolution"
         [:break] "by setting a router option: " [:break] [:break] "   "
         (edn {:conflicts nil})])
+     [:break] [:break]
+     (color ::link "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-conflicts")
      [:break]
      [:break]]))
 
@@ -137,7 +139,5 @@
                 (mapv first vals)))
             [:break]])
          conflicts))
-     (txt
-       [:span "Fix the conflicting paths."])
-     [:break]
-     [:break]]))
+     (color ::link "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-conflicts")
+     [:break] [:break]]))
