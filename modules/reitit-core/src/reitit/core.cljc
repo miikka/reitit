@@ -326,7 +326,7 @@
    :coerce (fn coerce [route _] route)
    :compile (fn compile [[_ {:keys [handler]}] _] handler)
    :exceptions exception/format
-   :conflicts (fn throw! [conflicts] (exception/fail! ::exception/path-conflicts conflicts))})
+   :conflicts (fn throw! [conflicts] (exception/fail! :path-conflicts conflicts))})
 
 (defn router
   "Create a [[Router]] from raw route data and optionally an options map.
@@ -369,7 +369,7 @@
            (when path-conflicting (conflicts path-conflicting)))
 
          (when name-conflicting
-           (exception/fail! ::exception/name-conflicts name-conflicting))
+           (exception/fail! :name-conflicts name-conflicting))
 
          (when-let [validate (:validate opts)]
            (validate compiled-routes opts))

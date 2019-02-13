@@ -73,7 +73,7 @@
        (footer printer)]
       printer)))
 
-(defmulti format-type (fn [type _ _ _] type))
+(defmulti format-type (fn [type _ _] type))
 
 (defmethod format-type :default [_ message _ _]
   [:group
@@ -82,7 +82,7 @@
 
 (defn format [e]
   (let [data (-> e ex-data :data)
-        message (format-type (-> e ex-data :type) (.getMessage e) data puget-printer)]
+        message (format-type (-> e ex-data :type) (.getMessage e) data)]
     (ex-info (format-str message puget-printer) data)))
 
 (def colors
@@ -104,61 +104,57 @@
     (println n " -> " (ansi n "kikka"))
     (println "...")))
 
+(def text (partial color :light))
+(def grey (partial color :grey))
+(def white (partial color :white))
+
 ;;
 ;; Formatters
 ;;
 
-(defmethod format-type ::exception/path-conflicts [_ _ conflicts printer]
-  (let [txt (partial color :light)
-        grey (partial color :grey)
-        white (partial color :white)
-        edn (partial edn-str printer)]
-    [:group
-     (txt "Router contains conflicting route paths:")
-     [:break] [:break]
-     (into
-       [:group]
-       (mapv
-         (fn [[[path] vals]]
-           [:group
-            [:span "   " (txt path)]
-            [:break]
-            (into
-              [:group]
-              (map
-                (fn [p] [:span (grey "-> " p) [:break]])
-                (mapv first vals)))
-            [:break]])
-         conflicts))
-     [:span (txt "Either fix the conflicting paths or disable the conflict resolution")
-      [:break] (txt "by setting a router option: ") [:break] [:break]
-      "   " (txt "{") (color 193 :conflicts) (txt " nil}")
-      ;[:break] "   " (edn {:conflicts nil})
-      ]
-     [:break] [:break]
-     (white "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-conflicts")
-     [:break]
-     [:break]]))
+(defmethod format-type :path-conflicts [_ _ conflicts]
+  [:group
+   (text "Router contains conflicting route paths:")
+   [:break] [:break]
+   (into
+     [:group]
+     (mapv
+       (fn [[[path] vals]]
+         [:group
+          [:span "   " (text path)]
+          [:break]
+          (into
+            [:group]
+            (map
+              (fn [p] [:span (grey "-> " p) [:break]])
+              (mapv first vals)))
+          [:break]])
+       conflicts))
+   [:span (text "Either fix the conflicting paths or disable the conflict resolution")
+    [:break] (text "by setting a router option: ") [:break] [:break]
+    "   " (text "{") (color 193 :conflicts) (text " nil}")]
+   [:break] [:break]
+   (white "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-conflicts")
+   [:break]
+   [:break]])
 
-(defmethod format-type ::exception/name-conflicts [_ _ conflicts printer]
-  (let [txt #(body % printer)
-        color #(color/document printer %1 %2)]
-    [:group
-     (txt "Router contains conflicting route names:")
-     [:break] [:break]
-     (into
-       [:group]
-       (mapv
-         (fn [[name vals]]
-           [:group
-            [:span (color :keyword (str name))]
-            [:break]
-            (into
-              [:group]
-              (map
-                #(color ::error [:span "-> " % [:break]])
-                (mapv first vals)))
-            [:break]])
-         conflicts))
-     (color ::link "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-conflicts")
-     [:break] [:break]]))
+(defmethod format-type :name-conflicts [_ _ conflicts]
+  [:group
+   (text "Router contains conflicting route names:")
+   [:break] [:break]
+   (into
+     [:group]
+     (mapv
+       (fn [[name vals]]
+         [:group
+          [:span (text name)]
+          [:break]
+          (into
+            [:group]
+            (map
+              (fn [p] [:span (grey "-> " p) [:break]])
+              (mapv first vals)))
+          [:break]])
+       conflicts))
+   (white "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-conflicts")
+   [:break] [:break]])

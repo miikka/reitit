@@ -21,14 +21,14 @@
 ;; Formatters
 ;;
 
-(defmethod format-type ::path-conflicts [_ _ conflicts]
+(defmethod format-type :path-conflicts [_ _ conflicts]
   (apply str "Router contains conflicting route paths:\n\n"
          (mapv
            (fn [[[path] vals]]
              (str "   " path "\n-> " (str/join "\n-> " (mapv first vals)) "\n\n"))
            conflicts)))
 
-(defmethod format-type ::name-conflicts [_ _ conflicts]
+(defmethod format-type :name-conflicts [_ _ conflicts]
   (apply str "Router contains conflicting route names:\n\n"
          (mapv
            (fn [[name vals]]
