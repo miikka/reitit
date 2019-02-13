@@ -1,6 +1,5 @@
 (ns reitit.core
-  (:require [clojure.string :as str]
-            [reitit.impl :as impl]
+  (:require [reitit.impl :as impl]
             [reitit.exception :as exception]
             [reitit.trie :as trie]))
 
