@@ -269,7 +269,7 @@
                          (let [p (:value p)
                                ends (ends c)]
                            (if (next ends)
-                             (ex/fail! (str "Trie compliation error: wild " p " has two terminators: " ends))
+                             (ex/fail! :multiple-trie-terminators {:terminators ends})
                              (wild-matcher p (ffirst ends) (compile c))))))
                      (into (for [[p c] catch-all] (catch-all-matcher (:value p) params (:data c)))))]
     (cond

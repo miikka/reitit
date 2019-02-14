@@ -379,3 +379,28 @@
        (catch Exception e
          (let [exceptions (:exceptions opts)]
            (throw (if exceptions (exceptions e) e))))))))
+
+;;
+;; spike
+;;
+
+(require '[reitit.pretty :as pretty])
+
+(comment
+
+  (router
+    [["/:a/1"]
+     ["/1/:a"]]
+    {:exceptions pretty/format})
+
+  (router
+    [["/kikka" ::kikka]
+     ["/kukka" ::kikka]]
+    {:exceptions pretty/format})
+
+  (router
+    [["/{a}.pdf"]
+     ["/{a}-pdf"]]
+    {:exceptions pretty/format})
+
+  )

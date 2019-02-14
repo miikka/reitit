@@ -6,7 +6,7 @@
   ([type]
    (fail! type nil))
   ([type data]
-   (throw (ex-info (str "exception " type) {:type type, :data data}))))
+   (throw (ex-info (str type) {:type type, :data data}))))
 
 (defmulti format-type (fn [type _ _] type))
 
