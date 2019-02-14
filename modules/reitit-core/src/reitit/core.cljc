@@ -401,6 +401,4 @@
   (router
     [["/{a}.pdf"]
      ["/{a}-pdf"]]
-    {:exceptions pretty/format})
-
-  )
+    {:exceptions pretty/format}))

@@ -1,6 +1,7 @@
 (ns reitit.pretty
   (:refer-clojure :exclude [format])
   (:require [fipp.visit :refer [visit visit*]]
+            [arrangement.core]
             [fipp.edn]
             [fipp.ednize]
             [fipp.engine]))
@@ -92,12 +93,14 @@
     (fipp.edn/pretty-coll this "[" x :line "]" visit))
 
   (visit-map [this x]
-    (fipp.edn/pretty-coll this (color :text "{") x [:span (color :text ",") :line] (color :text "}")
-                          (fn [printer [k v]]
-                            [:span (visit printer k) " " (visit printer v)])))
+    (let [xs (sort-by identity (fn [a b] (arrangement.core/rank (first a) (first b))) x)]
+      (fipp.edn/pretty-coll this (color :text "{") xs [:span (color :text ",") :line] (color :text "}")
+                            (fn [printer [k v]]
+                              [:span (visit printer k) " " (visit printer v)]))))
 
   (visit-set [this x]
-    (fipp.edn/pretty-coll this "#{" x :line "}" visit))
+    (let [xs (sort-by identity (fn [a b] (arrangement.core/rank a b)) x)]
+      (fipp.edn/pretty-coll this "#{" xs :line "}" visit)))
 
   (visit-tagged [this {:keys [tag form]}]
     [:group "#" (pr-str tag)
