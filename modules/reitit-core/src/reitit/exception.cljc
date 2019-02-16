@@ -10,8 +10,6 @@
 
 (defmulti format-type (fn [type _ _] type))
 
-(defmethod format-type :default [_ message data] (str message " - " (pr-str data)))
-
 (defn format [e]
   (let [data (ex-data e)
         message (format-type (:type data) (.getMessage e) (:data data))]
@@ -20,6 +18,9 @@
 ;;
 ;; Formatters
 ;;
+
+(defmethod format-type :default [_ message data]
+  (str message "\n\n" (pr-str data)))
 
 (defmethod format-type :path-conflicts [_ _ conflicts]
   (apply str "Router contains conflicting route paths:\n\n"

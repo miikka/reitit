@@ -4,7 +4,8 @@
             [arrangement.core]
             [fipp.edn]
             [fipp.ednize]
-            [fipp.engine]))
+            [fipp.engine]
+            [clojure.string :as str]))
 
 ;;
 ;; colors
@@ -14,6 +15,8 @@
   {:white 255
    :text 253
    :grey 245
+   :title-dark 32
+   :title  45
 
    :string 180
    :comment 243
@@ -150,11 +153,22 @@
 (defn repeat-str [s n]
   (apply str (take n (repeat s))))
 
-(defn title [message {:keys [width]}]
-  (color :apropos-highlight (str "-- " message " " (repeat-str "-" (- width (count message) 4)))))
+(defn source [[target _ file line]]
+  (let [ns (-> target name (str/replace #"\..[^.]*$" ""))]
+    [(str ns "." file) line]))
+
+(defn title [message [file line] {:keys [width]}]
+  (let [source-str (str file " " line)
+        between (- width (count message) 8 (count source-str))]
+    [:group
+     (color :title-dark "-- ")
+     (color :title message " ")
+     (color :title-dark (repeat-str "-" between) " ")
+     (color :title source-str) " "
+     (color :title-dark (str "--"))]))
 
 (defn footer [{:keys [width]}]
-  (color :apropos-highlight (repeat-str "-" width)))
+  (color :title-dark (repeat-str "-" width)))
 
 (defn text [& text]
   (apply color :text text))
@@ -164,11 +178,11 @@
   ([x options]
    (with-out-str (pprint x options))))
 
-(defn exception-str [message printer]
+(defn exception-str [message source printer]
   (with-out-str
     (print-doc
       [:group
-       (title "Router creation failed" printer)
+       (title "Router creation failed" source printer)
        [:break] [:break]
        message
        [:break]
@@ -179,8 +193,11 @@
 
 (defn format [e]
   (let [data (-> e ex-data :data)
-        message (format-type (-> e ex-data :type) (.getMessage e) data)]
-    (ex-info (exception-str message (->printer)) (or data {}))))
+        message (format-type (-> e ex-data :type) (ex-message e) data)
+        source (->> e Throwable->map :trace
+                    (drop-while #(not= (name (first %)) "reitit.core$router"))
+                    next first source)]
+    (ex-info (exception-str message source (->printer)) (or data {}))))
 
 ;;
 ;; Formatters
