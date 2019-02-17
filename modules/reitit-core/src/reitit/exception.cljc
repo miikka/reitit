@@ -35,5 +35,3 @@
            (fn [[name vals]]
              (str name "\n-> " (str/join "\n-> " (mapv first vals)) "\n"))
            conflicts)))
-
-

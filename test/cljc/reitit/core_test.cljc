@@ -382,3 +382,59 @@
   (let [router (r/router ["/endpoint" (->Named :kikka)])]
     (is (= [["/endpoint" {:name :kikka}]]
            (r/routes router)))))
+
+;;
+;; errors
+;;
+
+(require '[reitit.pretty :as pretty]
+         '[reitit.spec :as rs]
+         '[reitit.core :as r]
+         '[clojure.spec.alpha :as s])
+
+(s/def ::role #{:admin :manager})
+(s/def ::roles (s/coll-of ::role :into #{}))
+(s/def ::data (s/keys :req [::role ::roles]))
+
+(comment
+
+  ;; route conflicts
+  (r/router
+    [["/:a/1"]
+     ["/1/:a"]]
+    {:exceptions pretty/format})
+
+  ;; path conflicts
+  (r/router
+    [["/kikka" ::kikka]
+     ["/kukka" ::kikka]]
+    {:exceptions pretty/format})
+
+  ;;
+  ;; trie
+  ;;
+
+  ;; two terminators
+  (r/router
+    [["/{a}.pdf"]
+     ["/{a}-pdf"]]
+    {:exceptions pretty/format})
+
+  ;; two following wilds
+  (r/router
+    ["/{a}{b}"]
+    {:exceptions pretty/format})
+
+  ;; unclosed brackers
+  (r/router
+    ["/api/{ipa"]
+    {:exceptions pretty/format})
+
+  ;;
+  ;; spec
+  ;;
+
+  (r/router
+    ["/api/ipa" {::roles #{:adminz}}]
+    {:validate rs/validate
+     :exceptions pretty/format}))
