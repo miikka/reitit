@@ -13,5 +13,5 @@ Routers can be configured via options. The following options are available for t
 | `:compile`   | Function of `route opts => result` to compile a route handler
 | `:validate`  | Function of `routes opts => ()` to validate route (data) via side-effects
 | `:conflicts` | Function of `{route #{route}} => ()` to handle conflicting routes
-| `:exceptions`| Function of `Exception => Exception ` to handle creation time exceptions (default `reitit.exception/format`)
+| `:exception` | Function of `Exception => Exception ` to handle creation time exceptions (default `reitit.exception/exception`)
 | `:router`    | Function of `routes opts => router` to override the actual router implementation

@@ -402,13 +402,13 @@
   (r/router
     [["/:a/1"]
      ["/1/:a"]]
-    {:exceptions pretty/format})
+    {:exception pretty/exception})
 
   ;; path conflicts
   (r/router
     [["/kikka" ::kikka]
      ["/kukka" ::kikka]]
-    {:exceptions pretty/format})
+    {:exception pretty/exception})
 
   ;;
   ;; trie
@@ -418,17 +418,17 @@
   (r/router
     [["/{a}.pdf"]
      ["/{a}-pdf"]]
-    {:exceptions pretty/format})
+    {:exception pretty/exception})
 
   ;; two following wilds
   (r/router
     ["/{a}{b}"]
-    {:exceptions pretty/format})
+    {:exception pretty/exception})
 
   ;; unclosed brackers
   (r/router
     ["/api/{ipa"]
-    {:exceptions pretty/format})
+    {:exception pretty/exception})
 
   ;;
   ;; spec
@@ -437,4 +437,4 @@
   (r/router
     ["/api/ipa" {::roles #{:adminz}}]
     {:validate rs/validate
-     :exceptions pretty/format}))
+     :exception pretty/exception}))

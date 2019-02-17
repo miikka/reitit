@@ -38,7 +38,9 @@
            (rs/->Problem p method data spec problems)))
        (keep identity) (seq)))
 
-(defn validate-spec!
-  [routes {:keys [spec ::rs/explain] :or {explain s/explain-str, spec ::data}}]
+(defn validate
+  [routes {:keys [spec] :or {spec ::data}}]
   (when-let [problems (validate-route-data routes :middleware spec)]
-    (rs/throw-on-problems! problems explain)))
+    (exception/fail!
+      ::invalid-route-data
+      {:problems problems})))

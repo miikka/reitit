@@ -1,5 +1,4 @@
 (ns reitit.exception
-  (:refer-clojure :exclude [format])
   (:require [clojure.string :as str]))
 
 (defn fail!
@@ -10,7 +9,7 @@
 
 (defmulti format-type (fn [type _ _] type))
 
-(defn format [e]
+(defn exception [e]
   (let [data (ex-data e)
         message (format-type (:type data) (.getMessage e) (:data data))]
     (ex-info message data)))

@@ -21,6 +21,28 @@
   * backed by a new `:trie-router`, replacing `:segment-router`
      * [over 40% faster](https://metosin.github.io/reitit/performance.html) on the JVM
 
+* **BREAKING**: `reitit.spec/validate-spec!` has been renamed to `reitit.spec/validate`
+
+* new router cration time exception handling
+  * new option `:exception` in `r/router`, of type `Exception => Exception` (default `reitit.exception/exception`)
+  * new exception pretty-printer `reitit.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp):
+  
+```clj
+(require '[reitit.core :as r])
+(require '[reitit.pretty :as pretty])
+
+(r/router
+  [["/:a/1"]
+   ["/1/:a"]]
+  {:exception pretty/exception})
+```
+
+<img src="https://gist.githubusercontent.com/ikitommi/ff9b091ffe87880d9847c9832bbdd3d2/raw/04a4b1c8d50b9798726b492247d952f8ee51414f/path-conflicts-repl.png">
+
+### `reitit.ring`
+
+* **BREAKING**: `reitit.ring.spec/validate-spec!` has been renamed to `reitit.ring.spec/validate`
+
 ## 0.2.13 (2019-01-26)
 
 * Don't throw `StringIndexOutOfBoundsException` with empty path lookup on wildcard paths, fixes [#209](https://github.com/metosin/reitit/issues/209)

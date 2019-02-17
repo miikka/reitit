@@ -99,6 +99,8 @@
 
                                   [com.clojure-goes-fast/clj-async-profiler "0.3.0"]
 
+                                  [com.bhauman/rebel-readline "0.1.4"]
+
                                   ;; https://github.com/bensu/doo/issues/180
                                   [fipp "0.6.14" :exclusions [org.clojure/core.rrb-vector]]]}
              :1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}

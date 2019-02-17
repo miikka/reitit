@@ -325,7 +325,7 @@
    :expand expand
    :coerce (fn coerce [route _] route)
    :compile (fn compile [[_ {:keys [handler]}] _] handler)
-   :exceptions exception/format
+   :exception exception/exception
    :conflicts (fn throw! [conflicts] (exception/fail! :path-conflicts conflicts))})
 
 (defn router
@@ -344,7 +344,7 @@
   | `:compile`   | Function of `route opts => result` to compile a route handler
   | `:validate`  | Function of `routes opts => ()` to validate route (data) via side-effects
   | `:conflicts` | Function of `{route #{route}} => ()` to handle conflicting routes
-  | `:exceptions`| Function of `Exception => Exception ` to handle creation time exceptions (default `reitit.exception/format`)
+  | `:exception` | Function of `Exception => Exception ` to handle creation time exceptions (default `reitit.exception/exception`)
   | `:router`    | Function of `routes opts => router` to override the actual router implementation"
   ([raw-routes]
    (router raw-routes {}))
@@ -377,5 +377,5 @@
          (router compiled-routes opts))
 
        (catch Exception e
-         (let [exceptions (:exceptions opts)]
+         (let [exceptions (:exception opts)]
            (throw (if exceptions (exceptions e) e))))))))
