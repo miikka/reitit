@@ -21,6 +21,7 @@
    :grey 245
    :title-dark 32
    :title 45
+   :red 217
 
    :string 180
    :comment 243
@@ -51,7 +52,11 @@
     (println (-color c "kikka") "->" c))
 
   (doseq [[n c] colors]
-    (println (-color c "kikka") "->" c n)))
+    (println (-color c "kikka") "->" c n))
+
+  (doseq [[k v] expound.ansi/sgr-code]
+    (println (expound.ansi/sgr "kikka" k) "->" k))
+  )
 
 (defn -start [x] (str "\033[38;5;" x "m"))
 (defn -end [] "\u001B[0m")
@@ -227,6 +232,8 @@
   [:align
    (-> s
        (de-expound-colors {:cyan :grey
+                           :red :red
+                           :magenta :grey
                            :green :constant})
        (str/split #"\n") (interleave (repeat [:break])))])
 

@@ -23,9 +23,9 @@
 
 * **BREAKING**: `reitit.spec/validate-spec!` has been renamed to `reitit.spec/validate`
 
-* new router cration time exception handling
+* new friendly router creation time exception handling
   * new option `:exception` in `r/router`, of type `Exception => Exception` (default `reitit.exception/exception`)
-  * new exception pretty-printer `reitit.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp):
+  * new exception pretty-printer `reitit.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp) and [expund](https://github.com/bhb/expound):
   
 ```clj
 (require '[reitit.core :as r])
@@ -37,7 +37,7 @@
   {:exception pretty/exception})
 ```
 
-<img src="https://gist.githubusercontent.com/ikitommi/ff9b091ffe87880d9847c9832bbdd3d2/raw/04a4b1c8d50b9798726b492247d952f8ee51414f/path-conflicts-repl.png">
+<img src="https://gist.githubusercontent.com/ikitommi/ff9b091ffe87880d9847c9832bbdd3d2/raw/04a4b1c8d50b9798726b492247d952f8ee51414f/path-conflicts-repl.png" width=640>
 
 ### `reitit.ring`
 
