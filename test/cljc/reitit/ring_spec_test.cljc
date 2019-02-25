@@ -21,13 +21,13 @@
   (testing "with default spec validates :name, :handler and :middleware"
     (is (thrown-with-msg?
           ExceptionInfo
-          #"Invalid route data"
+          #":reitit.ring.spec/invalid-route-data"
           (ring/router
             ["/api" {:handler "identity"}]
             {:validate rrs/validate})))
     (is (thrown-with-msg?
           ExceptionInfo
-          #"Invalid route data"
+          #":reitit.ring.spec/invalid-route-data"
           (ring/router
             ["/api" {:handler identity
                      :name "kikka"}]
@@ -36,7 +36,7 @@
   (testing "all endpoints are validated"
     (is (thrown-with-msg?
           ExceptionInfo
-          #"Invalid route data"
+          #":reitit.ring.spec/invalid-route-data"
           (ring/router
             ["/api" {:patch {:handler "identity"}}]
             {:validate rrs/validate}))))
@@ -51,7 +51,7 @@
     (testing "predicates are not allowed"
       (is (thrown-with-msg?
             ExceptionInfo
-            #"Not all specs satisfy the Spec protocol"
+            #":reitit.ring.spec/invalid-specs"
             (ring/router
               ["/api" {:handler "identity"}]
               {:spec any?
@@ -69,7 +69,7 @@
                                             (handler request)))}]}})))
     (is (thrown-with-msg?
           ExceptionInfo
-          #"Invalid route data"
+          #":reitit.ring.spec/invalid-route-data"
           (ring/router
             ["/api" {:get {:handler identity
                            :roles #{:adminz}}}]
@@ -113,7 +113,7 @@
 
   (is (thrown-with-msg?
         ExceptionInfo
-        #"Invalid route data"
+        #":reitit.ring.spec/invalid-route-data"
         (ring/router
           ["/api"
            ["/plus/:e"
