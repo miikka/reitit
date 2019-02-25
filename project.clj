@@ -32,6 +32,8 @@
                          [metosin/sieppari "0.0.0-alpha7"]
 
                          [meta-merge "1.0.0"]
+                         [fipp "0.6.14" :exclusions [org.clojure/core.rrb-vector]]
+                         [expound "0.7.2"]
                          [lambdaisland/deep-diff "0.0-25"]
                          [ring/ring-core "1.7.1"]
 
@@ -50,6 +52,7 @@
                    ;; all module sources for development
                    :source-paths ["modules/reitit/src"
                                   "modules/reitit-core/src"
+                                  "modules/reitit-dev/src"
                                   "modules/reitit-ring/src"
                                   "modules/reitit-http/src"
                                   "modules/reitit-middleware/src"
@@ -75,8 +78,9 @@
                                   [metosin/jsonista]
                                   [lambdaisland/deep-diff]
                                   [meta-merge]
+                                  [expound]
+                                  [fipp]
 
-                                  [expound "0.7.2"]
                                   [orchestra "2018.12.06-2"]
 
                                   [ring "1.7.1"]
@@ -99,10 +103,7 @@
 
                                   [com.clojure-goes-fast/clj-async-profiler "0.3.0"]
 
-                                  [com.bhauman/rebel-readline "0.1.4"]
-
-                                  ;; https://github.com/bensu/doo/issues/180
-                                  [fipp "0.6.14" :exclusions [org.clojure/core.rrb-vector]]]}
+                                  [com.bhauman/rebel-readline "0.1.4"]]}
              :1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
              :perf {:jvm-opts ^:replace ["-server"
                                          "-Xmx4096m"

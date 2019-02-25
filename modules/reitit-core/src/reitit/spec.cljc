@@ -112,10 +112,10 @@
 (defrecord Problem [path scope data spec problems])
 
 (defn validate-route-data [routes spec]
-  (->> (for [[p d _] routes]
-         (when-let [problems (and spec (s/explain-data spec d))]
-           (->Problem p nil d spec problems)))
-       (keep identity) (seq) (vec)))
+  (some->> (for [[p d _] routes]
+             (when-let [problems (and spec (s/explain-data spec d))]
+               (->Problem p nil d spec problems)))
+           (keep identity) (seq) (vec)))
 
 (defn validate [routes {:keys [spec] :or {spec ::default-data}}]
   (when-let [problems (validate-route-data routes spec)]

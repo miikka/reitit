@@ -1,4 +1,4 @@
-(ns reitit.pretty
+(ns reitit.dev.pretty
   (:require [clojure.string :as str]
             [clojure.spec.alpha :as s]
             [arrangement.core]
@@ -325,33 +325,3 @@
        problems))
    (color :white "https://cljdoc.org/d/metosin/reitit/CURRENT/doc/basics/route-data-validation")
    [:break]])
-
-;;
-;; spike
-;;
-
-(comment
-
-  (defrecord Kikka [a])
-
-  (pprint
-    {:kikka (->Kikka 1)
-     :inst (java.util.Date.)
-     :local-date (java.time.LocalDate/now)
-     :qualified #:user{:a 1, :b 2}
-     :info {:page 1, :seed "a366e3543970d332", :version "1.2", :results 1},
-     :results [{:email "laly.charles@example.com",
-                :phone "05-76-83-11-69",
-                :name {:title "ms", :first "laly", :last "charles"},
-                :nat "FR",
-                :dob {:date "1951-08-06T10:35:58Z", :age 67},
-                :id {:name "INSEE", :value "2NNaN03568987 00"},
-                :gender "female",
-                :registered {:date "2003-07-26T12:00:53Z", :age 15},
-                :cell "06-22-73-80-01",
-                :location {:timezone {:description "Brazil, Buenos Aires, Georgetown", :offset "-3:00"},
-                           :coordinates {:longitude "153.8848", :latitude "-3.7704"},
-                           :city "grenoble",
-                           :postcode 34826,
-                           :state "puy-de-dôme",
-                           :street "2777 rue des chartreux"}}]}))
