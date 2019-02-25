@@ -1,6 +1,6 @@
 ## Unreleased
 
-* Frontend controllers:
+* **BREAKING**: Frontend controllers redesigned
     * Controller `:params` function has been deprecated
     * Controller `:identity` function works the same as `:params`
     * New `:parameters` option can be used to declare which parameters
@@ -23,9 +23,12 @@
 
 * **BREAKING**: `reitit.spec/validate-spec!` has been renamed to `reitit.spec/validate`
 
-* new friendly router creation time exception handling
+
+### `reitit-dev`
+
+* new module for friendly router creation time exception handling
   * new option `:exception` in `r/router`, of type `Exception => Exception` (default `reitit.exception/exception`)
-  * new exception pretty-printer `reitit.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp) and [expund](https://github.com/bhb/expound):
+  * new exception pretty-printer `reitit.dev.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp) and [expund](https://github.com/bhb/expound):
   
 ```clj
 (require '[reitit.core :as r])
@@ -42,6 +45,10 @@
 ### `reitit.ring`
 
 * **BREAKING**: `reitit.ring.spec/validate-spec!` has been renamed to `reitit.ring.spec/validate`
+
+### `reitit.ring`
+
+* **BREAKING**: `reitit.http.spec/validate-spec!` has been renamed to `reitit.ring.spec/validate`
 
 ## 0.2.13 (2019-01-26)
 
