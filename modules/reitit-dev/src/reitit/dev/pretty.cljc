@@ -219,7 +219,7 @@
 
 (defn exception [e]
   (let [data (-> e ex-data :data)
-        message (format-type (-> e ex-data :type) (ex-message e) data)
+        message (format-type (-> e ex-data :type) #?(:clj (.getMessage ^Exception e) :cljs (ex-message e)) data)
         source (->> e Throwable->map :trace
                     (drop-while #(not= (name (first %)) "reitit.core$router"))
                     (drop-while #(= (name (first %)) "reitit.core$router"))
@@ -227,11 +227,15 @@
     (ex-info (exception-str message source (->printer)) (or data {}))))
 
 (defn de-expound-colors [^String s mappings]
-  (-> (reduce
-        (fn [s [from to]]
-          (.replace ^String s ^String (expound.ansi/esc [from]) (-start (colors to))))
-        s mappings)
-      (.replace ^String (expound.ansi/esc [:none]) (str (expound.ansi/esc [:none]) (-start (colors :text))))))
+  (let [s' (reduce
+             (fn [s [from to]]
+               (.replace ^String s
+                         ^String (expound.ansi/esc [from])
+                         ^String (-start (colors to))))
+             s mappings)]
+    (.replace ^String s'
+              ^String (expound.ansi/esc [:none])
+              (str (expound.ansi/esc [:none]) (-start (colors :text))))))
 
 (defn fippify [s]
   [:align
