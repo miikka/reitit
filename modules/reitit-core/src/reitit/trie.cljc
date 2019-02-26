@@ -52,12 +52,12 @@
         (case (get s to)
           \{ (let [to' (or (str/index-of s "}" to) (ex/fail! ::unclosed-brackets {:path s}))]
                (if (= \* (get s (inc to)))
-                 (recur (concat ss (-static from to) (-catch-all (inc to) to')) (inc to') (inc to'))
-                 (recur (concat ss (-static from to) (-wild to to')) (inc to') (inc to'))))
+                 (recur (concat ss (-static from to) (-catch-all (inc to) to')) (long (inc to')) (long (inc to')))
+                 (recur (concat ss (-static from to) (-wild to to')) (long (inc to')) (long (inc to')))))
           \: (let [to' (or (str/index-of s "/" to) (count s))]
-               (recur (concat ss (-static from to) (-wild to to')) to' to'))
+               (recur (concat ss (-static from to) (-wild to to')) (long to') (long to')))
           \* (let [to' (count s)]
-               (recur (concat ss (-static from to) (-catch-all to to')) to' to'))
+               (recur (concat ss (-static from to) (-catch-all to to')) (long to') (long to')))
           (recur ss from (inc to)))))))
 
 (defn join-path [xs]
