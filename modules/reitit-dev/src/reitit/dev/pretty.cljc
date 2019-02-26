@@ -172,11 +172,17 @@
 (defn repeat-str [s n]
   (apply str (take n (repeat s))))
 
+;; TODO: this is hack, but seems to work and is safe.
 (defn source-str [[target _ file line]]
-  (if (and (not= 1 line))
-    (let [ns (-> target name (str/replace #"\..[^.]*$" ""))]
-      (str ns "." file ":" line))
-    "repl"))
+  (try
+    (if (and (not= 1 line))
+      (let [file-name (str/replace file #"(.*?)\.\S[^\.]+" "$1")
+            target-name (name target)
+            ns (str (subs target-name 0 (str/index-of target-name (str "user" "$"))) file-name)]
+        (str ns ":" line))
+      "repl")
+    (catch #?(:clj Exception, :cljs js/Error) _
+      "unknown")))
 
 (defn title [message source {:keys [width]}]
   (let [between (- width (count message) 8 (count source))]
