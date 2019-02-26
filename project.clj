@@ -13,6 +13,7 @@
   :javac-options ["-Xlint:unchecked" "-target" "1.8" "-source" "1.8"]
   :managed-dependencies [[metosin/reitit "0.2.13"]
                          [metosin/reitit-core "0.2.13"]
+                         [metosin/reitit-dev "0.2.13"]
                          [metosin/reitit-spec "0.2.13"]
                          [metosin/reitit-schema "0.2.13"]
                          [metosin/reitit-ring "0.2.13"]
