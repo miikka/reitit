@@ -229,10 +229,9 @@
 (defn de-expound-colors [^String s mappings]
   (-> (reduce
         (fn [s [from to]]
-          (.replace ^String s (expound.ansi/esc [from]) (-start (colors to))))
+          (.replace ^String s ^String (expound.ansi/esc [from]) (-start (colors to))))
         s mappings)
-      (.replace (expound.ansi/esc [:none]) (str (expound.ansi/esc [:none]) (-start (colors :text))))))
-
+      (.replace ^String (expound.ansi/esc [:none]) (str (expound.ansi/esc [:none]) (-start (colors :text))))))
 
 (defn fippify [s]
   [:align
