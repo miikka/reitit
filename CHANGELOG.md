@@ -28,19 +28,41 @@
 
 * new module for friendly router creation time exception handling
   * new option `:exception` in `r/router`, of type `Exception => Exception` (default `reitit.exception/exception`)
-  * new exception pretty-printer `reitit.dev.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp) and [expund](https://github.com/bhb/expound):
+  * new exception pretty-printer `reitit.dev.pretty/exception`, based on [fipp](https://github.com/brandonbloom/fipp) and [expund](https://github.com/bhb/expound) for human readable, newbie-friendly errors.
   
+#### Conflicting paths
+ 
 ```clj
 (require '[reitit.core :as r])
-(require '[reitit.pretty :as pretty])
+(require '[reitit.dev.pretty :as pretty])
 
 (r/router
-  [["/:a/1"]
-   ["/1/:a"]]
+  [["/ping"]
+   ["/:user-id/orders"]
+   ["/bulk/:bulk-id"]
+   ["/public/*path"]
+   ["/:version/status"]]
   {:exception pretty/exception})
 ```
 
-<img src="https://gist.githubusercontent.com/ikitommi/ff9b091ffe87880d9847c9832bbdd3d2/raw/04a4b1c8d50b9798726b492247d952f8ee51414f/path-conflicts-repl.png" width=640>
+<img src="https://gist.githubusercontent.com/ikitommi/ff9b091ffe87880d9847c9832bbdd3d2/raw/0e185e07e4ac49109bb653b4ad4656896cb41b2f/path-conflicts.png" width=640>
+
+#### Route data error
+
+```clj
+(require '[reitit.spec :as spec])
+(require '[clojure.spec.alpha :as s])
+
+(s/def ::role #{:admin :user})
+(s/def ::roles (s/coll-of ::role :into #{}))
+
+(r/router
+  ["/api/admin" {::roles #{:adminz}}]
+  {:validate spec/validate
+   :exception pretty/exception})
+```
+
+<img src="https://gist.githubusercontent.com/ikitommi/ff9b091ffe87880d9847c9832bbdd3d2/raw/0e185e07e4ac49109bb653b4ad4656896cb41b2f/route-data-error.png" width=640>
 
 ### `reitit.ring`
 
