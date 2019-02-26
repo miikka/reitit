@@ -11,7 +11,7 @@
 
 (defn exception [e]
   (let [data (ex-data e)
-        message (format-type (:type data) (ex-message e) (:data data))]
+        message (format-type (:type data) #?(:clj (.getMessage ^Exception e) :cljs (ex-message e)) (:data data))]
     (ex-info message data)))
 
 ;;
